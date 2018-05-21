@@ -1,0 +1,462 @@
+#!/bin/bash
+
+# TurboVNC Style Checker, or
+# How I Learned to Stop Worrying and Love Regular Expressions
+#
+# Copyright (C)2018 D. R. Commander.  All Rights Reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# - Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+# - Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# - Neither the name of The VirtualGL Project nor the names of its
+#   contributors may be used to endorse or promote products derived from this
+#   software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS",
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+SCRIPTDIR=`dirname $0`
+
+set -f
+
+# Move along.  Nothing to format here.
+FORMATTED='unix/Xvnc/programs/Xserver/hw/vnc/dispcur.c unix/Xvnc/programs/Xserver/hw/vnc/sprite.c unix/Xvnc/programs/Xserver/hw/vnc/zrleencodetemplate.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.h unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.c unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.h unix/Xvnc/programs/Xserver/hw/vnc/zrletypes.h unix/Xvnc/programs/Xserver/hw/vnc/zywrletemplate.c unix/include/vncExt.h unix/vncconnect/vncExt.c unix/vncviewer/JavaAppLauncher.m unix/vncviewer/JRSwizzle.m unix/vncviewer/JRSwizzle.h win/vncviewer/keysymdef.h win/vncviewer/keysym2ucs.c win/vncviewer/wintab/ win/vncviewer/XF86keysym.h'
+NFORMATTED=$(for i in $FORMATTED; do echo :!$i; done)
+
+# Files that use tabs for indentation
+TIFILES="*CMakeLists.txt $(git ls-files -- cmakescripts/ ':!cmakescripts/GNUInstallDirs.cmake' ':!cmakescripts/cmake_uninstall.cmake.in') $(git ls-files -- release/ ':!release/deb-control.in' ':!release/rpm.spec.in' ':!release/*.txt') unix/vncviewer/*.in win/util/ win/vncviewer-java/*.in"
+NTIFILES=$(for i in $TIFILES; do echo :!$i; done)
+
+EXCLFILES=':!*.png :!*.bmp :!*.icns :!*.rtf :!*.cur :!*.ico'
+FILES="*CMakeLists.txt *.yml cmakescripts/ java/com/turbovnc/ release/ unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ unix/vncserver*.in win/util/ win/vncviewer* $EXCLFILES"
+
+CFILES='unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ win/util/ :!*.m :!*.in'
+
+VNCSERVER='unix/vncserver.in'
+
+if [ "$1" = "-selftest" ]; then
+	pushd $SCRIPTDIR >/dev/null 2>&1
+	SCRIPTDIR=.
+	FILES="styletest.c"
+	CFILES="styletest.c"
+	TIFILES=
+	VNCSERVER=
+fi
+
+filter_quotes()
+{
+	pcregrep -v ':.*\"[^\"]*'"$EXPR"'[^\"]*\"'
+}
+
+grep_without_c_comments()
+{
+	git ls-files -- ${2+"$@"} | while read file; do
+		"$SCRIPTDIR/remcomms.sh" $file | pcregrep "$1" | sed -E 's@^@'$file':@'
+	done
+}
+
+
+echo
+
+echo '********** DETECTING WHITESPACE ERRORS **********'
+
+echo '---------- Stray tab characters ----------'
+echo
+git grep -E $'\t' -- $FILES $NFORMATTED $NTIFILES ':!release/rpm.spec.in'
+if [ "$TIFILES" != "" ]; then
+	git grep -P '[^^\n\t]\t' -- $TIFILES $EXCLFILES
+fi
+echo
+
+echo "---------- Spaces used for indentation where they shouldn't be ----------"
+echo
+EXPR='^ +'
+if [ "$TIFILES" != "" ]; then
+	grep_without_c_comments "$EXPR" $TIFILES $EXCLFILES
+fi
+unset EXPR
+echo
+
+echo '---------- Alt-Space ----------'
+echo
+git grep ' ' -- $FILES
+echo
+
+echo '---------- Blank line(s) at top of file ----------'
+echo
+git ls-files -- $FILES | while read file; do
+	MATCH=`head -n1 $file | grep -E '^[ '$'\t]*$'`
+	if [ $? = 0 ]; then
+		echo $file:$MATCH
+	fi
+done
+echo
+
+echo '---------- No blank line at end of file ----------'
+echo
+git ls-files -- $FILES | while read file; do
+	pcregrep -ML '\n\Z$' $file
+done
+echo
+
+echo '---------- General whitespace errors ----------'
+echo
+git diff --check $(git rev-list HEAD | tail -n 1) -- $FILES ':!unix/Xvnc/programs/Xserver/hw/vnc/sprite.c'
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT COMMENT FORMATTING **********'
+
+echo '---------- Incorrect trailing comment spacing ----------'
+echo
+git grep -P '[^ \t:\/]\/[\/\*]' -- $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!release/' ':!unix/vncserver*.in'
+git grep -E '[^ \\] \/[\/\*]' -- $FILES $NFORMATTED
+echo
+
+echo '---------- C++-style comments in C files ----------'
+echo
+git grep -P '(?<!http:)//' -- $CFILES $NFORMATTED
+echo
+
+echo '---------- C-style trailing comments in C++/Java files ----------'
+echo
+git grep -E '[^ ] +\/\*' -- java/com/turbovnc/ win/vncviewer/ $NFORMATTED
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING BAD LINE CONTINUATION SPACING **********'
+echo
+git grep -E '[^ ]+(\\| \\)$' -- $FILES $NFORMATTED ':!*.in' ':!*.rc'
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING UNATTACHED else/catch **********'
+echo
+git ls-files -- $FILES $NFORMATTED | while read file; do
+	pcregrep -H -M '^[^{]*}\n+ *(else|catch)' $file
+	pcregrep -H -M 'else\n *{' $file
+done
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT BRACKET SPACING **********'
+
+echo '---------- Function-like macro with unattached bracket ----------'
+echo
+git ls-files -- $FILES $NFORMATTED | while read file; do
+	pcregrep -H -M '^ *#define[^\n]*\n *\{.*\\$' $file
+done
+echo
+
+echo '---------- {something ----------'
+echo
+EXPR='{[^ \}]'
+EXCLEXPR='(?<!\$ENV)(?<!\$opt)(?<!\$valFollows)(?<!\$SIG)'
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer.in' |
+	filter_quotes
+unset EXPR
+unset EXCLEXPR
+echo
+
+echo '---------- { something; ... ----------'
+echo
+EXPR='{ [^}]*[;\(][^}\)]*$'
+git grep -P "$EXPR" -- $FILES $NFORMATTED
+unset EXPR
+echo
+
+echo '---------- something} ----------'
+echo
+EXPR='[^ \t\{]}'
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' |
+	filter_quotes
+EXPR='[^A-Za-z '\'']}'
+if [ "$VNCSERVER" != "" ]; then
+	git grep -E "$EXPR" -- $VNCSERVER
+fi
+unset EXPR
+echo
+
+echo '---------- ... something; } ----------'
+echo
+EXPR='^[^{]*; +}'
+git grep -E "$EXPR" -- $FILES
+unset EXPR
+echo
+
+echo '---------- something{ ----------'
+echo
+EXPR='[^ \t]{'
+EXCLEXPR='(?<!\[\]{)'
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' |
+	filter_quotes
+EXPR='[^ \$]{'
+EXCLEXPR='(?<!\$ENV{)(?<!\$opt{)(?<!\$SIG{)(?<!\$valFollows{)'
+if [ "$VNCSERVER" != "" ]; then
+	git grep -P "$EXPR""$EXCLEXPR" -- $VNCSERVER
+fi
+unset EXPR
+unset EXCLEXPR
+echo
+
+echo '---------- }something ----------'
+echo
+EXPR='}[^ ;,\)\"'\'']'
+git grep -E "$EXPR" -- $FILES $NFORMATTED ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' |
+	filter_quotes
+unset EXPR
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT STATEMENT SPACING **********'
+
+for statement in if for else catch while do switch; do
+	echo '---------- '$statement'( ----------'
+	echo
+	git grep -E $statement'\(' -- $FILES $NFORMATTED ':!*CMakeLists.txt' ':!cmakescripts/' ':!win/util/fbx.c'
+	git ls-files -- $FILES | while read file; do
+		pcregrep -H -M $statement' *\([^\n]*\n *{' $file
+	done
+	echo
+done
+
+echo '---------- Semicolon spacing in one-liners ----------'
+echo
+EXPR='; [^ }]'
+EXCLEXPR='(?! *for \()(?!\t*for\()'
+grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.txt' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer.in' |
+	grep -vE '\) {$'
+unset EXPR
+unset EXCLEXPR
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT FUNCTION/TYPE CAST SPACING **********'
+
+echo '---------- (type*) ----------'
+echo
+git grep -E '[^ \*\.]\*\)' -- $FILES $NFORMATTED
+echo
+
+echo '---------- (type**) ----------'
+echo
+EXPR='[^ ]\*\*\)'
+git grep -E "$EXPR" -- $FILES $NFORMATTED
+unset EXPR
+echo
+
+echo '---------- (type) var ----------'
+echo
+EXPR='(?<!if)(^| |\(|\*)\([^\*][^\)\(\> ]*\) [A-Za-z0-9_\(\"\&][^ \&]'
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' |
+	filter_quotes
+unset EXPR
+echo
+
+echo '---------- (type *) var ----------'
+echo
+git grep -E '\*\) [A-Za-z0-9_\(]' -- $FILES $NFORMATTED
+echo
+
+echo '---------- (*something->method)(args) ----------'
+echo
+git grep -E '\(\*[^\(\)]*\)\(' -- $FILES $NFORMATTED ':!win/util/fbx.c'
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT MACRO SPACING **********'
+echo
+EXCLEXPR='(?!#define PUT_PIXEL[13][62])(?!#define Swap32)(?!#define ZLIB_MAX_SIZE)'
+git ls-files -- $FILES | while read file; do
+	pcregrep -H -M "$EXCLEXPR"'^#define.*\\\n {5,}[^ \\]+' $file
+done
+# #define  something
+git grep -E '^[#%]define {2,}' -- $FILES
+unset EXCLEXPR
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT COMMA SPACING **********'
+
+echo '---------- [ ], ----------'
+echo
+git grep -E ' ,' -- $FILES |
+	filter_quotes |
+	grep -vE 'zrle\.c:#define EXTRA_ARGS'
+echo
+
+echo '---------- ,something ----------'
+echo
+EXPR=',[^ \"'\''=\]]'
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.rc' ':!CMakeLists.txt' |
+	filter_quotes
+unset EXPR
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT OPERATOR SPACING **********'
+
+echo '---------- Incorrect pointer operator spacing ----------'
+echo
+EXPR='[^ /]\* '
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!cmakescripts/' ':!*.man' |
+	filter_quotes
+unset EXPR
+echo
+
+echo '---------- Incorrect address operator spacing ----------'
+echo
+git grep -E '[^ \&]\& ' -- $FILES $NFORMATTED
+echo
+
+# OPERATORS:
+# Assignment: =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
+# Arithmetic: +, -, *, /, %
+# Unary: +something, -something
+# Increment/decrement: ++something, something++, --something, something--
+# Comparison: ==, !=, >, <, >=, <=
+# Logical: !, &&, ||
+# Bitwise: ~, &, |, ^, <<, >>
+
+echo '---------- No space before other operators ----------'
+echo
+OP='(?!\-\>)(?!\+\+)(?!\-\-)([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\*(?!\))|\-(?![0-9])|\>+|\<+|&&|(?<!\))&|\|+|\^)'
+EXPR='[^ ]\b[\)\]]*'"$OP"
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt'  ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' |
+	filter_quotes |
+	pcregrep -v '\.java:.*[A-Z][A-Za-z]+\<[A-Za-z0-9 \[\]\?\.,]+\>' |
+	pcregrep -v ':#(include|import) \<.*\>' |
+	pcregrep -v 'win/vncviewer/[A-Za-z0-9]+\.(cpp|h):.*std::(map|list|set)\<[^\<\>]+\>'
+
+# Process ternary conditional operators separately, so we can filter out
+# cases and labels.
+EXPR='[^ ]\b[\)\]]*[?:](?!:)'
+EXCLEXPR='(?<!http:)'
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/'  ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/Xvnc/programs/Xserver/hw/vnc/README' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' ':!*.m' |
+	filter_quotes |
+	grep -vE '(\.c|\.java|\.h): *[A-Za-z0-9_]+:' |
+	grep -vE '(\.c|\.cpp|\.java|\.h): *(case|default|bailout|public|private).*:' |
+	grep -vE 'win/vncviewer/.*\.(cpp|h):#pragma warning\((disable|default)'
+
+EXCLEXPR='(?<!http:)(?<!withMethod:)(?<!jr_swizzleMethod:)(?<!sendEvent:)(?<!newSendEvent:)'
+grep_without_c_comments "$EXPR""$EXCLEXPR" 'unix/vncviewer/turbovnchelper.m' |
+	filter_quotes |
+	grep -vE ': *[A-Za-z0-9_\\\(\)]+:' |
+	grep -vE ': *(case|default|bailout).*:'
+
+unset EXPR
+unset EXCLEXPR
+echo
+
+echo '---------- No space after other operators ----------'
+echo
+# NOTE: We can't check for *something or &something effectively, because
+# there's no way to distinguish those errors from valid pointer/address
+# operators.  We also can't check for -something effectively, because there's
+# no way to distinguish those errors from valid unary operators.  We have to
+# hope that, if such errors exist, they will be caught by the something{op}
+# check.  We also have to hope that someone will eventually write a decent
+# open source C style checker!
+OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\>+|\<+|&&|\|+|\^)(?<!\-\>)(?<!\+\+)(?<!\-\-)'
+EXPR="$OP"'[\(]*\b[^ ]'
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' |
+	filter_quotes |
+	pcregrep -v '\.java:.*[A-Z][A-Za-z]+\<[A-Za-z0-9 \[\]\?\.,]+\>' |
+	pcregrep -v ':#(include|import) \<.*\>' |
+	pcregrep -v 'win/vncviewer/[A-Za-z0-9]+\.(cpp|h):.*std::(map|list|set)\<[^\<\>]+\>'
+
+# Process ternary conditional operators separately
+EXPR='[^:][?:][\(]*\b[^ ]'
+EXCLEXPR='(?<!newSendEvent:\(N)'
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' ':!*.man' ':!win/util/fbx.c' |
+	filter_quotes
+
+unset EXPR
+unset EXCLEXPR
+echo
+
+echo '---------- [!|~] something ----------'
+echo
+grep_without_c_comments '(?<!=)[!~] \b' $FILES |
+	filter_quotes
+echo
+
+echo '---------- something [::] something ----------'
+echo
+grep_without_c_comments '( ::|:: )' -- $FILES ':!cmakescripts/' ':!*.rc'
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT OPERATOR CONTINUANCE **********'
+echo
+OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+\-\*/%]|\>+|\<+|&+|\|+|\^|\?|\:)'
+EXPR='^ *'"$OP"' +'
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' |
+	grep -v '\.m:-'
+unset EXPR
+echo
+
+echo # ************************************************************************
+
+
+echo '********** DETECTING INCORRECT FUNCTION SPACING **********'
+echo
+EXPR='\b \([^\*]'
+EXCLEXPR='(?<!if \(.)(?<!do \(.)(?<!return \(.)(?<!for \(.)(?<!while \(.)(?<!switch \(.)(?<!else \(.)(?<!catch \(.)(?<!assert \(.)(?<!throw \(.)'
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' ':!*.rc' ':!win/util/fbx.h' |
+	filter_quotes |
+	grep -v ':#define' |
+	grep -v ':typedef'
+EXPR='\b \([^@]'
+EXCLEXPR='(?<!if \(.)(?<!for \(.)(?<!while \(.)(?<!local \(.)(?<!print \(.)(?<!unless \(.)'
+if [ "$VNCSERVER" != "" ]; then
+	git grep -P -- "$EXPR""$EXCLEXPR" $VNCSERVER |
+		filter_quotes |
+		grep -v ':#' |
+		grep -vE ': +foreach \$[a-z]+ \('
+fi
+git ls-files -- $FILES $NFORMATTED ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.in' | while read file; do
+	pcregrep -H -M '^[^\/\(\)\n]+\n[A-Za-z0-9_:]+\(' $file
+done
+echo
+
+echo # ************************************************************************
+
+
+if [ "$1" = "-selftest" ]; then
+	popd >/dev/null 2>&1
+fi

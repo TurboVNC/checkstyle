@@ -1,0 +1,318 @@
+
+********** DETECTING WHITESPACE ERRORS **********
+---------- Stray tab characters ----------
+
+styletest.c:	something;  /* hit */
+
+---------- Spaces used for indentation where they shouldn't be ----------
+
+
+---------- Alt-Space ----------
+
+styletest.c:  /* hit */
+
+---------- Blank line(s) at top of file ----------
+
+styletest.c:
+
+---------- No blank line at end of file ----------
+
+
+---------- General whitespace errors ----------
+
+styletest.c:439: new blank line at EOF.
+
+
+********** DETECTING INCORRECT COMMENT FORMATTING **********
+---------- Incorrect trailing comment spacing ----------
+
+styletest.c:  /* hit */
+
+---------- C++-style comments in C files ----------
+
+styletest.c:// hit
+
+---------- C-style trailing comments in C++/Java files ----------
+
+
+
+********** DETECTING BAD LINE CONTINUATION SPACING **********
+
+styletest.c:#define something()  /* hit */ \
+styletest.c:#define something()  /* hit */\
+
+
+********** DETECTING UNATTACHED else/catch **********
+
+styletest.c:  something;
+}
+else (something_else)  /* hit */
+styletest.c:  something;
+}
+
+else (something_else)  /* hit */
+styletest.c:  something;
+}
+catch (something_else)  /* hit */
+styletest.c:  something;
+}
+
+catch (something_else)  /* hit */
+
+
+********** DETECTING INCORRECT BRACKET SPACING **********
+---------- Function-like macro with unattached bracket ----------
+
+styletest.c:#define something2()  \
+{  \
+styletest.c:#define something2()  \
+{ something2;  ### hit ###  \
+
+---------- {something ----------
+
+styletest.c:{something;  ### hit ###
+styletest.c:{something;}  ### hit ###
+
+---------- { something; ... ----------
+
+styletest.c:{ something2;  ### hit ###  \
+styletest.c:{ something;  ### hit ###
+
+---------- something} ----------
+
+styletest.c:something;}  ### hit ###
+styletest.c:{something;}  ### hit ###
+
+---------- ... something; } ----------
+
+styletest.c:something; }  /* hit */
+styletest.c:; }  /* hit */
+
+---------- something{ ----------
+
+styletest.c:something{  ### hit ###
+
+---------- }something ----------
+
+styletest.c:}something  /* hit */
+
+
+********** DETECTING INCORRECT STATEMENT SPACING **********
+---------- if( ----------
+
+styletest.c:if()  /* hit */
+
+---------- for( ----------
+
+styletest.c:for()  /* hit */
+
+---------- else( ----------
+
+styletest.c:else()  /* hit */
+
+---------- catch( ----------
+
+styletest.c:catch()  /* hit */
+
+---------- while( ----------
+
+styletest.c:while()  /* hit */
+
+---------- do( ----------
+
+styletest.c:do()  /* hit */
+
+---------- switch( ----------
+
+styletest.c:switch()  /* hit */
+
+---------- Semicolon spacing in one-liners ----------
+
+styletest.c:do_stuff; do_other_stuff;  ### hit ###
+
+
+********** DETECTING INCORRECT FUNCTION/TYPE CAST SPACING **********
+---------- (type*) ----------
+
+styletest.c:  (type*)hello  ### hit ###
+
+---------- (type**) ----------
+
+styletest.c:  (type**)hello  ### hit ###
+
+---------- (type) var ----------
+
+styletest.c:  (type) var  ### hit ###
+styletest.c:  (type) "text"  ### hit ###
+styletest.c:  (type) &var  ### hit ###
+styletest.c:  *(type) var  ### hit ###
+styletest.c:(type) var  ### hit ###
+styletest.c:if ((type) var == something)  ### hit ###
+styletest.c:something + (type) var  ### hit ###
+styletest.c:  return (type) var  ### hit ###
+styletest.c:  ((type) var  ### hit ###
+styletest.c:((type) var  ### hit ###
+styletest.c:return ((type) var  ### hit ###
+styletest.c:(type) (var)  ### hit ###
+
+---------- (type *) var ----------
+
+styletest.c:(type *) var  ### hit ###
+styletest.c:(type **) var  ### hit ###
+
+---------- (*something->method)(args) ----------
+
+styletest.c:  (*something->method)(args)  /* hit */
+styletest.c:  ( (*something->method)(args)  /* hit */
+styletest.c:  ((*something->method)(args)  /* hit */
+styletest.c:  (*something)(args)  /* hit */
+
+
+********** DETECTING INCORRECT MACRO SPACING **********
+
+styletest.c:#define macro  \
+     something;  /* hit */
+styletest.c:#define  macro  something  /* hit */
+
+
+********** DETECTING INCORRECT COMMA SPACING **********
+---------- [ ], ----------
+
+styletest.c:comma ,comma ,down ,doobie ,doo ,down ,down ,comma ,comma  ### hit ###
+
+---------- ,something ----------
+
+styletest.c:comma,comma,down,doobie,doo,down,down,comma,comma  ### hit ###
+styletest.c:comma ,comma ,down ,doobie ,doo ,down ,down ,comma ,comma  ### hit ###
+
+
+********** DETECTING INCORRECT OPERATOR SPACING **********
+---------- Incorrect pointer operator spacing ----------
+
+styletest.c:char* something;  ### hit ###
+
+---------- Incorrect address operator spacing ----------
+
+styletest.c:char& something;  ### hit ###
+
+---------- No space before other operators ----------
+
+styletest.c:  (type**)hello  ### hit ###
+styletest.c:char* something;  ### hit ###
+styletest.c:char& something;  ### hit ###
+styletest.c:### hit ###  something=
+styletest.c:### hit ###  (something)=
+styletest.c:### hit ###  something[something]=
+styletest.c:### hit ###  something+=
+styletest.c:### hit ###  something-=
+styletest.c:### hit ###  something*=
+styletest.c:### hit ###  something/=
+styletest.c:### hit ###  something%=
+styletest.c:### hit ###  something&=
+styletest.c:### hit ###  something|=
+styletest.c:### hit ###  something^=
+styletest.c:### hit ###  something<<=
+styletest.c:### hit ###  something>>=
+styletest.c:### hit ###  something+
+styletest.c:### hit ###  something-
+styletest.c:### hit ###  something*
+styletest.c:### hit ###  something/
+styletest.c:### hit ###  something%
+styletest.c:### hit ###  something==
+styletest.c:### hit ###  something!=
+styletest.c:### hit ###  something>
+styletest.c:### hit ###  something<
+styletest.c:### hit ###  something>=
+styletest.c:### hit ###  something<=
+styletest.c:### hit ###  something&&
+styletest.c:### hit ###  something||
+styletest.c:### hit ###  something&
+styletest.c:### hit ###  something|
+styletest.c:### hit ###  something^
+styletest.c:### hit ###  something<<
+styletest.c:### hit ###  something>>
+styletest.c:something? something: something  ### hit ###
+
+---------- No space after other operators ----------
+
+styletest.c:=something  ### hit ###
+styletest.c:=(something)  ### hit ###
+styletest.c:+=something  ### hit ###
+styletest.c:-=something  ### hit ###
+styletest.c:*=something  ### hit ###
+styletest.c:&=something  ### hit ###
+styletest.c:%=something  ### hit ###
+styletest.c:/=something  ### hit ###
+styletest.c:|=something  ### hit ###
+styletest.c:^=something  ### hit ###
+styletest.c:<<=something  ### hit ###
+styletest.c:>>=something  ### hit ###
+styletest.c:+something  ### hit ###
+styletest.c:/something  ### hit ###
+styletest.c:%something  ### hit ###
+styletest.c:==something  ### hit ###
+styletest.c:!=something  ### hit ###
+styletest.c:>something  ### hit ###
+styletest.c:<something  ### hit ###
+styletest.c:>=something  ### hit ###
+styletest.c:<=something  ### hit ###
+styletest.c:&&something  ### hit ###
+styletest.c:||something  ### hit ###
+styletest.c:|something  ### hit ###
+styletest.c:^something  ### hit ###
+styletest.c:<<something  ### hit ###
+styletest.c:>>something  ### hit ###
+styletest.c:something ?something :something  ### hit ###
+
+---------- [!|~] something ----------
+
+styletest.c:! something  ### hit ###
+styletest.c:~ something  ### hit ###
+
+---------- something [::] something ----------
+
+
+
+********** DETECTING INCORRECT OPERATOR CONTINUANCE **********
+
+styletest.c:= something  ### miss [hit on operator continuance] ###
+styletest.c:= (something)  ### miss [hit on operator continuance] ###
+styletest.c:+= something  ### miss [hit on operator continuance] ###
+styletest.c:-= something  ### miss [hit on operator continuance] ###
+styletest.c:*= something  ### miss [hit on operator continuance] ###
+styletest.c:&= something  ### miss [hit on operator continuance] ###
+styletest.c:%= something  ### miss [hit on operator continuance] ###
+styletest.c:/= something  ### miss [hit on operator continuance] ###
+styletest.c:|= something  ### miss [hit on operator continuance] ###
+styletest.c:^= something  ### miss [hit on operator continuance] ###
+styletest.c:<<= something  ### miss [hit on operator continuance] ###
+styletest.c:>>= something  ### miss [hit on operator continuance] ###
+styletest.c:+ something  ### miss [hit on operator continuance] ###
+styletest.c:- something  ### miss [hit on operator continuance] ###
+styletest.c:* something  ### miss [hit on operator continuance] ###
+styletest.c:/ something  ### miss [hit on operator continuance] ###
+styletest.c:% something  ### miss [hit on operator continuance] ###
+styletest.c:== something  ### miss [hit on operator continuance] ###
+styletest.c:!= something  ### miss [hit on operator continuance] ###
+styletest.c:> something  ### miss [hit on operator continuance] ###
+styletest.c:< something  ### miss [hit on operator continuance] ###
+styletest.c:>= something  ### miss [hit on operator continuance] ###
+styletest.c:<= something  ### miss [hit on operator continuance] ###
+styletest.c:&& something  ### miss [hit on operator continuance] ###
+styletest.c:|| something  ### miss [hit on operator continuance] ###
+styletest.c:| something  ### miss [hit on operator continuance] ###
+styletest.c:^ something  ### miss [hit on operator continuance] ###
+styletest.c:<< something  ### miss [hit on operator continuance] ###
+styletest.c:>> something  ### miss [hit on operator continuance] ###
+styletest.c:& something  ### miss [hit on operator continuance] ###
+styletest.c:? something  ### hit ###
+styletest.c:: something  ### hit ###
+
+
+********** DETECTING INCORRECT FUNCTION SPACING **********
+
+styletest.c:  something (args)  ### hit ###
+styletest.c:static My_awesome_type
+something(args)  ### hit ###
+
+
