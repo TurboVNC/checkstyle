@@ -442,7 +442,7 @@ grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMak
 	grep -v ':#define' |
 	grep -v ':typedef'
 EXPR='\b \([^@]'
-EXCLEXPR='(?<!if \(.)(?<!for \(.)(?<!while \(.)(?<!local \(.)(?<!print \(.)(?<!unless \(.)'
+EXCLEXPR='(?<!if \(.)(?<!for \(.)(?<!while \(.)(?<!local \(.)(?<!unless \(.)'
 if [ "$VNCSERVER" != "" ]; then
 	git grep -P -- "$EXPR""$EXCLEXPR" $VNCSERVER |
 		filter_quotes |
