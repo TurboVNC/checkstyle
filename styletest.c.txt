@@ -20,7 +20,7 @@ styletest.c:
 
 ---------- General whitespace errors ----------
 
-styletest.c:439: new blank line at EOF.
+styletest.c:453: new blank line at EOF.
 
 
 ********** DETECTING INCORRECT COMMENT FORMATTING **********
@@ -42,7 +42,7 @@ styletest.c:#define something()  /* hit */ \
 styletest.c:#define something()  /* hit */\
 
 
-********** DETECTING UNATTACHED else/catch **********
+********** DETECTING UNATTACHED else/catch/struct **********
 
 styletest.c:  something;
 }
@@ -58,6 +58,8 @@ styletest.c:  something;
 }
 
 catch (something_else)  /* hit */
+styletest.c:typedef struct _mystruct
+{  /* hit */
 
 
 ********** DETECTING INCORRECT BRACKET SPACING **********
@@ -67,6 +69,10 @@ styletest.c:#define something2()  \
 {  \
 styletest.c:#define something2()  \
 { something2;  ### hit ###  \
+
+---------- class with attached bracket ----------
+
+styletest.c:class Foo {  /* hit */
 
 ---------- {something ----------
 

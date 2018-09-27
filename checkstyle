@@ -150,11 +150,14 @@ echo
 echo # ************************************************************************
 
 
-echo '********** DETECTING UNATTACHED else/catch **********'
+echo '********** DETECTING UNATTACHED else/catch/struct **********'
 echo
 git ls-files -- $FILES $NFORMATTED | while read file; do
 	pcregrep -H -M '^[^{]*}\n+ *(else|catch)' $file
 	pcregrep -H -M 'else\n *{' $file
+done
+git ls-files -- $FILES $NFORMATTED ':!win/util/fbx.c' ':!win/util/fbx.h' | while read file; do
+	pcregrep -H -M '^[^\n\(\/\*]*struct[^\n\)\/\*]*\n[ ]*\{[^\};]*$' $file
 done
 echo
 
@@ -168,6 +171,11 @@ echo
 git ls-files -- $FILES $NFORMATTED | while read file; do
 	pcregrep -H -M '^ *#define[^\n]*\n *\{.*\\$' $file
 done
+echo
+
+echo '---------- class with attached bracket ----------'
+echo
+git grep -E "^ *class .*\{[^}]" -- $FILES ':!java/'
 echo
 
 echo '---------- {something ----------'
