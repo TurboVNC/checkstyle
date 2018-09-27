@@ -302,7 +302,7 @@ echo # ************************************************************************
 
 echo '********** DETECTING INCORRECT MACRO SPACING **********'
 echo
-EXCLEXPR='(?!#define PUT_PIXEL[13][62])(?!#define Swap32)(?!#define ZLIB_MAX_SIZE)'
+EXCLEXPR='(?!#define PUT_PIXEL[13][62])(?!#define Swap32)(?!#define ZLIB_MAX_SIZE)(?!#define PACKETDATA)(?!#define NOT_FOUND_STR)'
 git ls-files -- $FILES | while read file; do
 	pcregrep -H -M "$EXCLEXPR"'^#define.*\\\n {5,}[^ \\]+' $file
 done
