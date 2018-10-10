@@ -34,7 +34,7 @@ SCRIPTDIR=`dirname $0`
 set -f
 
 # Move along.  Nothing to format here.
-FORMATTED='unix/Xvnc/programs/Xserver/hw/vnc/dispcur.c unix/Xvnc/programs/Xserver/hw/vnc/sprite.c unix/Xvnc/programs/Xserver/hw/vnc/zrleencodetemplate.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.h unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.c unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.h unix/Xvnc/programs/Xserver/hw/vnc/zrletypes.h unix/Xvnc/programs/Xserver/hw/vnc/zywrletemplate.c unix/include/vncExt.h unix/vncconnect/vncExt.c unix/vncviewer/JavaAppLauncher.m unix/vncviewer/JRSwizzle.m unix/vncviewer/JRSwizzle.h win/vncviewer/keysymdef.h win/vncviewer/keysym2ucs.c win/vncviewer/wintab/ win/vncviewer/XF86keysym.h'
+FORMATTED='unix/Xvnc/programs/Xserver/hw/vnc/dispcur.c unix/Xvnc/programs/Xserver/hw/vnc/sprite.c unix/Xvnc/programs/Xserver/hw/vnc/zrleencodetemplate.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.h unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.c unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.h unix/Xvnc/programs/Xserver/hw/vnc/zrletypes.h unix/Xvnc/programs/Xserver/hw/vnc/zywrletemplate.c unix/include/vncExt.h unix/vncconnect/vncExt.c unix/vncviewer/JRSwizzle.m unix/vncviewer/JRSwizzle.h win/vncviewer/keysymdef.h win/vncviewer/keysym2ucs.c win/vncviewer/wintab/ win/vncviewer/XF86keysym.h'
 NFORMATTED=$(for i in $FORMATTED; do echo :!$i; done)
 
 # Files that use tabs for indentation
@@ -408,7 +408,7 @@ grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMak
 # Process ternary conditional operators separately
 EXPR='[^:][?:][\(]*\b[^ ]'
 EXCLEXPR='(?<!newSendEvent:\(N)'
-grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' ':!*.man' ':!win/util/fbx.c' |
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer.in' ':!*.man' ':!win/util/fbx.c' ':!unix/vncviewer/JavaAppLauncher.m' |
 	filter_quotes
 
 unset EXPR
