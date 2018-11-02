@@ -217,9 +217,10 @@ echo
 echo '---------- something{ ----------'
 echo
 EXPR='[^ \t]{'
-EXCLEXPR='(?<!\[\]{)'
+EXCLEXPR='(?<!\[\]{)(?<!\"{)'
 grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
+
 EXPR='[^ \$]{'
 EXCLEXPR='(?<!\$ENV{)(?<!\$opt{)(?<!\$SIG{)(?<!\$valFollows{)'
 if [ "$VNCSERVER" != "" ]; then
