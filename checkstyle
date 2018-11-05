@@ -257,7 +257,7 @@ echo '---------- Semicolon spacing in one-liners ----------'
 echo
 EXPR='; [^ }]'
 EXCLEXPR='(?! *for \()(?!\t*for\()'
-grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.txt' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
 	grep -vE '\) {$'
 unset EXPR
 unset EXCLEXPR
@@ -283,7 +283,7 @@ echo
 echo '---------- (type) var ----------'
 echo
 EXPR='(?<!if)(^| |\(|\*)\([^\*][^\)\(\> ]*\) [A-Za-z0-9_\(\"\&][^ \&]'
-grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' |
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' |
 	filter_quotes
 unset EXPR
 echo
@@ -363,7 +363,7 @@ echo '---------- No space before other operators ----------'
 echo
 OP='(?!\-\>)(?!\+\+)(?!\-\-)([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\*(?!\))|\-(?![0-9])|\>+|\<+|&&|(?<!\))&|\|+|\^)'
 EXPR='[^ ]\b[\)\]]*'"$OP"
-grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt'  ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' |
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt'  ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' |
 	filter_quotes |
 	pcregrep -v '\.java:.*[A-Z][A-Za-z]+\<[A-Za-z0-9 \[\]\?\.,]+\>' |
 	pcregrep -v ':#(include|import) \<.*\>' |
@@ -373,7 +373,7 @@ grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt'
 # cases and labels.
 EXPR='[^ ]\b[\)\]]*[?:](?!:)'
 EXCLEXPR='(?<!http:)'
-grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/'  ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/Xvnc/programs/Xserver/hw/vnc/README' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' ':!*.m' |
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/'  ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/Xvnc/programs/Xserver/hw/vnc/README' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' ':!*.m' |
 	filter_quotes |
 	grep -vE '(\.c|\.java|\.h): *[A-Za-z0-9_]+:' |
 	grep -vE '(\.c|\.cpp|\.java|\.h): *(case|default|bailout|public|private).*:' |
@@ -400,7 +400,7 @@ echo
 # open source C style checker!
 OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\>+|\<+|&&|\|+|\^)(?<!\-\>)(?<!\+\+)(?<!\-\-)'
 EXPR="$OP"'[\(]*\b[^ ]'
-grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' |
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/util/fbx.*' ':!win/vncviewer-java/*.in' ':!*.rc' |
 	filter_quotes |
 	pcregrep -v '\.java:.*[A-Z][A-Za-z]+\<[A-Za-z0-9 \[\]\?\.,]+\>' |
 	pcregrep -v ':#(include|import) \<.*\>' |
@@ -434,7 +434,7 @@ echo '********** DETECTING INCORRECT OPERATOR CONTINUANCE **********'
 echo
 OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+\-\*/%]|\>+|\<+|&+|\|+|\^|\?|\:)'
 EXPR='^ *'"$OP"' +'
-grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' |
+grep_without_c_comments "$EXPR" $FILES $NFORMATTED ':!*.yml' ':!java/com/turbovnc/vncviewer/README.md' |
 	grep -v '\.m:-'
 unset EXPR
 echo
@@ -446,7 +446,7 @@ echo '********** DETECTING INCORRECT FUNCTION SPACING **********'
 echo
 EXPR='\b \([^\*]'
 EXCLEXPR='(?<!if \(.)(?<!do \(.)(?<!return \(.)(?<!for \(.)(?<!while \(.)(?<!switch \(.)(?<!else \(.)(?<!catch \(.)(?<!assert \(.)(?<!throw \(.)'
-grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.txt' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' ':!*.rc' ':!win/util/fbx.h' |
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' ':!*.rc' ':!win/util/fbx.h' |
 	filter_quotes |
 	grep -v ':#define' |
 	grep -v ':typedef'
