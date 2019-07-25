@@ -3,7 +3,7 @@
 # TurboVNC Style Checker, or
 # How I Learned to Stop Worrying and Love Regular Expressions
 #
-# Copyright (C)2018 D. R. Commander.  All Rights Reserved.
+# Copyright (C)2018-2019 D. R. Commander.  All Rights Reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -41,7 +41,7 @@ NFORMATTED=$(for i in $FORMATTED; do echo :!$i; done)
 TIFILES="*CMakeLists.txt $(git ls-files -- cmakescripts/ ':!cmakescripts/GNUInstallDirs.cmake' ':!cmakescripts/cmake_uninstall.cmake.in') $(git ls-files -- release/ ':!release/deb-control.in' ':!release/rpm.spec.in' ':!release/*.txt') unix/vncviewer/*.in win/util/ win/vncviewer-java/*.in"
 NTIFILES=$(for i in $TIFILES; do echo :!$i; done)
 
-EXCLFILES=':!*.png :!*.bmp :!*.icns :!*.rtf :!*.cur :!*.ico'
+EXCLFILES=':!*.png :!*.bmp :!*.icns :!*.rtf :!*.cur :!*.ico :!unix/vncviewer/JavaAppLauncher'
 FILES="*CMakeLists.txt *.yml cmakescripts/ java/com/turbovnc/ release/ unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ unix/vncserver*.in :!unix/vncserver.man.in win/util/ win/vncviewer* $EXCLFILES"
 
 CFILES='unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ win/util/ :!*.m :!*.in'
