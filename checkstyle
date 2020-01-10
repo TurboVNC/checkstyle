@@ -3,7 +3,7 @@
 # TurboVNC Style Checker, or
 # How I Learned to Stop Worrying and Love Regular Expressions
 #
-# Copyright (C)2018-2019 D. R. Commander.  All Rights Reserved.
+# Copyright (C)2018-2020 D. R. Commander.  All Rights Reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -270,7 +270,8 @@ echo '********** DETECTING INCORRECT FUNCTION/TYPE CAST SPACING **********'
 
 echo '---------- (type*) ----------'
 echo
-git grep -E '[^ \*\.]\*\)' -- $FILES $NFORMATTED
+EXCLEXPR='(?<!\\\\)'
+git grep -P "$EXCLEXPR"'[^ \*\.]\*\)' -- $FILES $NFORMATTED
 echo
 
 echo '---------- (type**) ----------'
