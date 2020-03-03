@@ -256,7 +256,7 @@ done
 echo '---------- Semicolon spacing in one-liners ----------'
 echo
 EXPR='; [^ }]'
-EXCLEXPR='(?! *for \()(?!\t*for\()'
+EXCLEXPR='(?! *for \()(?!\t*for\()(?! *channelExec.setCommand\()'
 grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
 	grep -vE '\) {$'
 unset EXPR
