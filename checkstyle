@@ -34,7 +34,7 @@ SCRIPTDIR=`dirname $0`
 set -f
 
 # Move along.  Nothing to format here.
-FORMATTED='unix/Xvnc/programs/Xserver/hw/vnc/dispcur.c unix/Xvnc/programs/Xserver/hw/vnc/sprite.c unix/Xvnc/programs/Xserver/hw/vnc/zrleencodetemplate.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.h unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.c unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.h unix/Xvnc/programs/Xserver/hw/vnc/zrletypes.h unix/Xvnc/programs/Xserver/hw/vnc/zywrletemplate.c unix/include/vncExt.h unix/vncconnect/vncExt.c unix/vncviewer/JRSwizzle.m unix/vncviewer/JRSwizzle.h'
+FORMATTED='unix/Xvnc/programs/Xserver/hw/vnc/base64.c unix/Xvnc/programs/Xserver/hw/vnc/base64.h unix/Xvnc/programs/Xserver/hw/vnc/dispcur.c unix/Xvnc/programs/Xserver/hw/vnc/sprite.c unix/Xvnc/programs/Xserver/hw/vnc/ws_decode.c unix/Xvnc/programs/Xserver/hw/vnc/ws_decode.h unix/Xvnc/programs/Xserver/hw/vnc/zrleencodetemplate.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.c unix/Xvnc/programs/Xserver/hw/vnc/zrleoutstream.h unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.c unix/Xvnc/programs/Xserver/hw/vnc/zrlepalettehelper.h unix/Xvnc/programs/Xserver/hw/vnc/zrletypes.h unix/Xvnc/programs/Xserver/hw/vnc/zywrletemplate.c unix/include/vncExt.h unix/vncconnect/vncExt.c unix/vncviewer/JRSwizzle.m unix/vncviewer/JRSwizzle.h'
 NFORMATTED=$(for i in $FORMATTED; do echo :!$i; done)
 
 # Files that use tabs for indentation
@@ -260,6 +260,7 @@ echo
 EXPR='; [^ }]'
 EXCLEXPR='(?! *for \()(?!\t*for\()(?! *channelExec.setCommand\()'
 grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
+	filter_quotes |
 	grep -vE '\) {$'
 unset EXPR
 unset EXCLEXPR
