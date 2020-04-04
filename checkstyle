@@ -255,6 +255,11 @@ for statement in if for else catch while do switch; do
 	echo
 done
 
+echo '---------- Semicolon spacing ----------'
+echo
+git grep -E ' ;' -- $FILES $NFORMATTED ':!unix/vncserver.init.in' ':!unix/vncserver.in'
+echo
+
 echo '---------- Semicolon spacing in one-liners ----------'
 echo
 EXPR='; [^ }]'
