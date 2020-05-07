@@ -375,7 +375,9 @@ EXPR='[^ ]\b[\)\]]*'"$OP"
 grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt'  ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/vncviewer/*.in' ':!*.rc' |
 	filter_quotes |
 	pcregrep -v '\.java:.*[A-Z][A-Za-z]+\<[A-Za-z0-9 \[\]\?\.,]+\>' |
-	pcregrep -v ':#(include|import) \<.*\>'
+	pcregrep -v ':#(include|import) \<.*\>' |
+	pcregrep -v 'win/vncviewer/[A-Za-z0-9]+\.(cpp|h):.*std::(map|list|set)\<[^\<\>]+\>' |
+	pcregrep -v 'win/vncviewer-java/[A-Za-z0-9]+\.(cpp|h):.*std::(map|list|set)\<[^\<\>]+\>'
 
 # Process ternary conditional operators separately, so we can filter out
 # cases and labels.
@@ -410,7 +412,9 @@ EXPR="$OP"'[\(]*\b[^ ]'
 grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/vncviewer/*.in' ':!*.rc' |
 	filter_quotes |
 	pcregrep -v '\.java:.*[A-Z][A-Za-z]+\<[A-Za-z0-9 \[\]\?\.,]+\>' |
-	pcregrep -v ':#(include|import) \<.*\>'
+	pcregrep -v ':#(include|import) \<.*\>' |
+	pcregrep -v 'win/vncviewer/[A-Za-z0-9]+\.(cpp|h):.*std::(map|list|set)\<[^\<\>]+\>' |
+	pcregrep -v 'win/vncviewer-java/[A-Za-z0-9]+\.(cpp|h):.*std::(map|list|set)\<[^\<\>]+\>'
 
 # Process ternary conditional operators separately
 EXPR='[^:][?:][\(]*\b[^ ]'
