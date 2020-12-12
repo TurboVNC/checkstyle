@@ -274,7 +274,7 @@ styletest.c:<<something  ### hit ###
 styletest.c:>>something  ### hit ###
 styletest.c:something ?something :something  ### hit ###
 
----------- [!|~] something ----------
+---------- Incorrect [!|~] operator spacing ----------
 
 styletest.c:! something  ### hit ###
 styletest.c:~ something  ### hit ###

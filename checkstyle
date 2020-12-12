@@ -426,10 +426,15 @@ unset EXPR
 unset EXCLEXPR
 echo
 
-echo '---------- [!|~] something ----------'
+echo '---------- Incorrect [!|~] operator spacing ----------'
 echo
-grep_without_c_comments '(?<!=)[!~] \b' $FILES $NDOCFILES |
+EXPR='[!~] +(\b|\$)'
+EXCLEXPR='(?<!=)(?<!\[ )'
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES |
 	filter_quotes
+git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' $FILES $NDOCFILES
+unset EXPR
+unset EXCLEXPR
 echo
 
 echo '---------- something [::] something ----------'
