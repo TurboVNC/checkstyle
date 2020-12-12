@@ -135,7 +135,7 @@
 ---------- No space after other operators ----------
 
 
----------- [!|~] something ----------
+---------- Incorrect [!|~] operator spacing ----------
 
 
 ---------- something [::] something ----------

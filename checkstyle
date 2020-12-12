@@ -235,7 +235,7 @@ echo
 echo '---------- }something ----------'
 echo
 EXPR='}[^ ;,\)\"'\'']'
-git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' |
+git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!.github/workflows' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' |
 	filter_quotes
 unset EXPR
 echo
@@ -328,9 +328,11 @@ echo '********** DETECTING INCORRECT COMMA SPACING **********'
 
 echo '---------- [ ], ----------'
 echo
-git grep -E ' ,' -- $FILES |
+EXPR=' ,'
+git grep -E "$EXPR" -- $FILES |
 	filter_quotes |
 	grep -vE 'zrle\.c:#define EXTRA_ARGS'
+unset EXPR
 echo
 
 echo '---------- ,something ----------'
@@ -426,10 +428,15 @@ unset EXPR
 unset EXCLEXPR
 echo
 
-echo '---------- [!|~] something ----------'
+echo '---------- Incorrect [!|~] operator spacing ----------'
 echo
-grep_without_c_comments '(?<!=)[!~] \b' $FILES $NDOCFILES |
+EXPR='[!~] +(\b|\$)'
+EXCLEXPR='(?<!=)(?<!\[ )'
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES |
 	filter_quotes
+git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' $FILES $NDOCFILES
+unset EXPR
+unset EXCLEXPR
 echo
 
 echo '---------- something [::] something ----------'
