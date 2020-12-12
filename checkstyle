@@ -235,7 +235,7 @@ echo
 echo '---------- }something ----------'
 echo
 EXPR='}[^ ;,\)\"'\'']'
-git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' |
+git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!.github/workflows' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' |
 	filter_quotes
 unset EXPR
 echo
