@@ -327,9 +327,11 @@ echo '********** DETECTING INCORRECT COMMA SPACING **********'
 
 echo '---------- [ ], ----------'
 echo
-git grep -E ' ,' -- $FILES |
+EXPR=' ,'
+git grep -E "$EXPR" -- $FILES |
 	filter_quotes |
 	grep -vE 'zrle\.c:#define EXTRA_ARGS'
+unset EXPR
 echo
 
 echo '---------- ,something ----------'
