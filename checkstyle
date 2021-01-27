@@ -184,7 +184,7 @@ echo '---------- {something ----------'
 echo
 EXPR='{[^ \}]'
 EXCLEXPR='(?<!\$ENV)(?<!\$opt)(?<!\$valFollows)(?<!\$SIG)'
-grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
 unset EXPR
 unset EXCLEXPR
@@ -200,7 +200,7 @@ echo
 echo '---------- something} ----------'
 echo
 EXPR='[^ \t\{]}'
-grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
 EXPR='[^A-Za-z '\'']}'
 if [ "$VNCSERVER" != "" ]; then
@@ -220,7 +220,7 @@ echo '---------- something{ ----------'
 echo
 EXPR='[^ \t]{'
 EXCLEXPR='(?<!\[\]{)(?<!\"{)'
-grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
 
 EXPR='[^ \$]{'
@@ -235,7 +235,7 @@ echo
 echo '---------- }something ----------'
 echo
 EXPR='}[^ ;,\)\"'\'']'
-git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!.github/workflows' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' |
+git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!.github/workflows' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' |
 	filter_quotes
 unset EXPR
 echo
@@ -421,7 +421,7 @@ grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.ym
 # Process ternary conditional operators separately
 EXPR='[^:][?:][\(]*\b[^ ]'
 EXCLEXPR='(?<!newSendEvent:\(N)'
-grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!*.man' ':!unix/vncviewer/JavaAppLauncher.m' |
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!*.man' ':!unix/vncviewer/JavaAppLauncher.m' |
 	filter_quotes
 
 unset EXPR
