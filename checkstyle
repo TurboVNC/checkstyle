@@ -434,7 +434,7 @@ EXPR='[!~] +(\b|\$)'
 EXCLEXPR='(?<!=)(?<!\[ )'
 grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES |
 	filter_quotes
-git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' $FILES $NDOCFILES
+git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' -- $FILES $NDOCFILES
 unset EXPR
 unset EXCLEXPR
 echo
