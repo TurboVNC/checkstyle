@@ -1,5 +1,5 @@
 Starting audit...
-[ERROR] /Users/drc/src/vnc/java/com/turbovnc/vncviewer/DesktopWindow.java:262: Line is longer than 79 characters (found 92). [LineLength]
-[ERROR] /Users/drc/src/vnc/java/com/turbovnc/vncviewer/DesktopWindow.java:282: Line is longer than 79 characters (found 92). [LineLength]
+[ERROR] /Users/drc/src/vnc/java/com/turbovnc/vncviewer/DesktopWindow.java:263: Line is longer than 79 characters (found 92). [LineLength]
+[ERROR] /Users/drc/src/vnc/java/com/turbovnc/vncviewer/DesktopWindow.java:283: Line is longer than 79 characters (found 92). [LineLength]
 Audit done.
 Checkstyle ends with 2 errors.
