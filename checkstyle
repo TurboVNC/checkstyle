@@ -291,7 +291,7 @@ echo
 echo '---------- (type) var ----------'
 echo
 EXPR='(?<!if)(^| |\(|\*)\([^\*][^\)\(\> ]*\) [A-Za-z0-9_\(\"\&][^ \&]'
-grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' |
+grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!java/com/turbovnc/vncviewer/README.md' ':!*.jnlp.in' ':!release/' ':!unix/vncserver.in' ':!*.man' |
 	filter_quotes
 unset EXPR
 echo
