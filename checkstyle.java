@@ -6,8 +6,9 @@ if [ "$1" != "" ]; then
 	FILES="$1"
 else
 	FILES='*.java'
+	EXCLFILES=':!java/com/jcraft :!java/org/spf4j :!java/org/mindrot'
 fi
 
-git ls-files -- "$FILES" ':!java/com/jcraft' ':!java/org/spf4j' ':!java/org/mindrot' | while read file; do
+git ls-files -- "$FILES" $EXCLFILES | while read file; do
 	java -jar ~/.checkstyle/checkstyle-all.jar -c $SCRIPTDIR/sun_checks.xml $file >$SCRIPTDIR/checkstyle.report/`basename $file`.txt
 done
