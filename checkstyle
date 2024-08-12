@@ -41,7 +41,7 @@ NFORMATTED=$(for i in $FORMATTED; do echo :!$i; done)
 TIFILES="*CMakeLists.txt $(git ls-files -- cmakescripts/ ':!cmakescripts/GNUInstallDirs.cmake' ':!cmakescripts/cmake_uninstall.cmake.in') $(git ls-files -- doc/[a-z]*.txt doc/*.css doc/*.rb) $(git ls-files -- release/ ':!release/deb-control.in' ':!release/rpm.spec.in' ':!release/*.txt') unix/vncviewer/*.in win/vncviewer/*.in"
 NTIFILES=$(for i in $TIFILES; do echo :!$i; done)
 
-EXCLFILES=':!*.png :!*.bmp :!*.icns :!*.rtf :!*.cur :!*.ico :!unix/vncviewer/JavaAppLauncher'
+EXCLFILES=':!*.png :!*.bmp :!*.icns :!*.rtf :!*.cur :!*.ico :!unix/vncviewer/JavaAppLauncher :!unix/Xvnc/lib/zlib-ng'
 FILES="*CMakeLists.txt *.yml cmakescripts/ doc/[a-z]*.txt doc/*.css doc/*.rb java/com/turbovnc/ release/ unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ unix/vncserver*.in :!unix/vncserver.man.in win/vncviewer/ $EXCLFILES"
 
 CFILES='unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ :!*.m :!*.in'
