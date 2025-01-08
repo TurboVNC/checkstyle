@@ -3,7 +3,7 @@
 # TurboVNC Style Checker, or
 # How I Learned to Stop Worrying and Love Regular Expressions
 #
-# Copyright (C)2018-2020 D. R. Commander.  All Rights Reserved.
+# Copyright (C)2018-2020, 2025 D. R. Commander.  All Rights Reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -78,7 +78,7 @@ echo '********** DETECTING WHITESPACE ERRORS **********'
 
 echo '---------- Stray tab characters ----------'
 echo
-git grep -E $'\t' -- $FILES $NFORMATTED $NTIFILES ':!release/rpm.spec.in'
+git grep -E $'\t' -- $FILES java/com/jcraft/jsch/ $NFORMATTED $NTIFILES ':!release/rpm.spec.in'
 if [ "$TIFILES" != "" ]; then
 	git grep -P '[^^\n\t]\t' -- $TIFILES $EXCLFILES
 fi
@@ -95,12 +95,12 @@ echo
 
 echo '---------- Alt-Space ----------'
 echo
-git grep ' ' -- $FILES
+git grep ' ' -- $FILES java/com/jcraft/jsch/
 echo
 
 echo '---------- Blank line(s) at top of file ----------'
 echo
-git ls-files -- $FILES | while read file; do
+git ls-files -- $FILES java/com/jcraft/jsch/ ':!java/com/jcraft/jsch/README' | while read file; do
 	MATCH=`head -n1 $file | grep -E '^[ '$'\t]*$'`
 	if [ $? = 0 ]; then
 		echo $file:$MATCH
@@ -110,14 +110,14 @@ echo
 
 echo '---------- No blank line at end of file ----------'
 echo
-git ls-files -- $FILES | while read file; do
+git ls-files -- $FILES java/com/jcraft/jsch/ | while read file; do
 	pcregrep -ML '\n\Z$' $file
 done
 echo
 
 echo '---------- General whitespace errors ----------'
 echo
-git diff --check $(git rev-list HEAD | tail -n 1) -- $FILES ':!unix/Xvnc/programs/Xserver/hw/vnc/sprite.c'
+git diff --check $(git rev-list HEAD | tail -n 1) -- $FILES java/com/jcraft/jsch/ ':!unix/Xvnc/programs/Xserver/hw/vnc/sprite.c'
 echo
 
 echo # ************************************************************************
@@ -146,7 +146,7 @@ echo # ************************************************************************
 
 echo '********** DETECTING BAD LINE CONTINUATION SPACING **********'
 echo
-git grep -E '[^ ]+(\\| \\)$' -- $FILES $NDOCFILES $NFORMATTED ':!*.in'
+git grep -E '[^ ]+(\\| \\)$' -- $FILES java/com/jcraft/jsch/ $NDOCFILES $NFORMATTED ':!*.in'
 echo
 
 echo # ************************************************************************
@@ -170,14 +170,14 @@ echo '********** DETECTING INCORRECT BRACKET SPACING **********'
 
 echo '---------- Function-like macro with unattached bracket ----------'
 echo
-git ls-files -- $FILES $NFORMATTED | while read file; do
+git ls-files -- $FILES java/com/jcraft/jsch/ $NFORMATTED | while read file; do
 	pcregrep -H -M '^ *#define[^\n]*\n *\{.*\\$' $file
 done
 echo
 
 echo '---------- class with attached bracket ----------'
 echo
-git grep -E "^ *class .*\{[^}]" -- $FILES ':!java/'
+git grep -E "^ *class .*\{[^}]" -- $FILES java/com/jcraft/jsch/ ':!java/'
 echo
 
 echo '---------- {something ----------'
@@ -212,7 +212,7 @@ echo
 echo '---------- ... something; } ----------'
 echo
 EXPR='^[^{]*; +}'
-git grep -E "$EXPR" -- $FILES
+git grep -E "$EXPR" -- $FILES java/com/jcraft/jsch/
 unset EXPR
 echo
 
@@ -279,13 +279,13 @@ echo '********** DETECTING INCORRECT FUNCTION/TYPE CAST SPACING **********'
 echo '---------- (type*) ----------'
 echo
 EXCLEXPR='(?<!\\\\)'
-git grep -P "$EXCLEXPR"'[^ \*\.]\*\)' -- $FILES $NFORMATTED
+git grep -P "$EXCLEXPR"'[^ \*\.]\*\)' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
 echo
 
 echo '---------- (type**) ----------'
 echo
 EXPR='[^ ]\*\*\)'
-git grep -E "$EXPR" -- $FILES $NFORMATTED
+git grep -E "$EXPR" -- $FILES java/com/jcraft/jsch/ $NFORMATTED
 unset EXPR
 echo
 
@@ -299,12 +299,12 @@ echo
 
 echo '---------- (type *) var ----------'
 echo
-git grep -E '\*\) [A-Za-z0-9_\(]' -- $FILES $NFORMATTED
+git grep -E '\*\) [A-Za-z0-9_\(]' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
 echo
 
 echo '---------- (*something->method)(args) ----------'
 echo
-git grep -E '\(\*[^\(\)]*\)\(' -- $FILES $NFORMATTED
+git grep -E '\(\*[^\(\)]*\)\(' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
 echo
 
 echo # ************************************************************************
@@ -313,7 +313,7 @@ echo # ************************************************************************
 echo '********** DETECTING INCORRECT MACRO SPACING **********'
 echo
 EXCLEXPR='(?!#define PUT_PIXEL[13][62])(?!#define Swap32)(?!#define ZLIB_MAX_SIZE)'
-git ls-files -- $FILES | while read file; do
+git ls-files -- $FILES java/com/jcraft/jsch/ | while read file; do
 	pcregrep -H -M "$EXCLEXPR"'^#define.*\\\n {5,}[^ \\]+' $file
 done
 # #define  something
@@ -358,7 +358,7 @@ echo
 
 echo '---------- Incorrect address operator spacing ----------'
 echo
-git grep -E '[^ \&]\& ' -- $FILES $NFORMATTED
+git grep -E '[^ \&]\& ' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
 echo
 
 # OPERATORS:
@@ -430,7 +430,7 @@ echo '---------- Incorrect [!|~] operator spacing ----------'
 echo
 EXPR='[!~] +(\b|\$)'
 EXCLEXPR='(?<!=)(?<!\[ )'
-grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES |
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES java/com/jcraft/jsch/ $NDOCFILES |
 	filter_quotes
 git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' -- $FILES $NDOCFILES
 unset EXPR
@@ -439,7 +439,7 @@ echo
 
 echo '---------- something [::] something ----------'
 echo
-grep_without_c_comments '( ::|:: )' -- $FILES $NDOCFILES ':!cmakescripts/'
+grep_without_c_comments '( ::|:: )' -- $FILES java/com/jcraft/jsch/ $NDOCFILES ':!cmakescripts/'
 echo
 
 echo # ************************************************************************
