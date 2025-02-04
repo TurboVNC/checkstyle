@@ -2,7 +2,7 @@
 /*
  * Training file for TurboVNC Style Checker
  *
- * Copyright (C)2018, 2020 D. R. Commander.  All Rights Reserved.
+ * Copyright (C)2018, 2020, 2025 D. R. Commander.  All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -155,6 +155,8 @@ do()  /* hit */
 do ()  /* miss */
 switch()  /* hit */
 switch ()  /* miss */
+synchronized()  /* hit */
+synchronized ()  /* miss */
 do_stuff; do_other_stuff;  ### hit ###
 do_stuff;  do_other_stuff;  ### miss ###
 do_stuff ;  /* hit */

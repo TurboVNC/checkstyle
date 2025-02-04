@@ -20,7 +20,7 @@ styletest.c:
 
 ---------- General whitespace errors ----------
 
-styletest.c:455: new blank line at EOF.
+styletest.c:457: new blank line at EOF.
 
 
 ********** DETECTING INCORRECT COMMENT FORMATTING **********
@@ -131,6 +131,10 @@ styletest.c:do()  /* hit */
 ---------- switch( ----------
 
 styletest.c:switch()  /* hit */
+
+---------- synchronized( ----------
+
+styletest.c:synchronized()  /* hit */
 
 ---------- Semicolon spacing ----------
 
