@@ -245,7 +245,7 @@ echo # ************************************************************************
 
 echo '********** DETECTING INCORRECT STATEMENT SPACING **********'
 
-for statement in if for else catch while do switch; do
+for statement in if for else catch while do switch synchronized; do
 	echo '---------- '$statement'( ----------'
 	echo
 	git grep -E $statement'\(' -- $FILES $NFORMATTED ':!*CMakeLists.txt' ':!cmakescripts/'
@@ -460,7 +460,7 @@ echo # ************************************************************************
 echo '********** DETECTING INCORRECT FUNCTION SPACING **********'
 echo
 EXPR='\b \([^\*]'
-EXCLEXPR='(?<!if \(.)(?<!do \(.)(?<!return \(.)(?<!for \(.)(?<!while \(.)(?<!switch \(.)(?<!else \(.)(?<!catch \(.)(?<!assert \(.)(?<!throw \(.)'
+EXCLEXPR='(?<!if \(.)(?<!do \(.)(?<!return \(.)(?<!for \(.)(?<!while \(.)(?<!switch \(.)(?<!else \(.)(?<!catch \(.)(?<!assert \(.)(?<!throw \(.)(?<!synchronized \(.)'
 grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.in' ':!*.man' |
 	filter_quotes |
 	grep -v ':#define' |
