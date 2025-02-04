@@ -42,11 +42,11 @@ TIFILES="*CMakeLists.txt $(git ls-files -- cmakescripts/ ':!cmakescripts/GNUInst
 NTIFILES=$(for i in $TIFILES; do echo :!$i; done)
 
 EXCLFILES=':!*.png :!*.bmp :!*.icns :!*.rtf :!*.cur :!*.ico :!unix/vncviewer/JavaAppLauncher :!unix/Xvnc/lib/zlib-ng'
-FILES="*CMakeLists.txt *.yml cmakescripts/ doc/[a-z]*.txt doc/*.css doc/*.rb java/com/turbovnc/ release/ unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ unix/vncserver*.in :!unix/vncserver.man.in win/vncviewer/ $EXCLFILES"
+FILES="*CMakeLists.txt *.yml cmakescripts/ doc/[a-z]*.txt doc/*.css doc/*.rb java/com/jcraft/jsch/ java/com/turbovnc/ release/ unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ unix/vncserver*.in :!unix/vncserver.man.in win/vncviewer/ $EXCLFILES"
 
 CFILES='unix/Xvnc/programs/Xserver/hw/vnc/ unix/include/ unix/libvncauth/ unix/vncconnect/ unix/vncpasswd/ unix/vncviewer/ :!*.m :!*.in'
 
-NDOCFILES=':!doc/[a-z]*.txt :!doc/*.css :!doc/*.rb'
+NDOCFILES=':!doc/[a-z]*.txt :!doc/*.css :!doc/*.rb :!java/com/jcraft/jsch/*.md :!/java/com/jcraft/jsch/ChangeLog :!java/com/jcraft/jsch/LICENSE* :!java/com/jcraft/jsch/README'
 
 VNCSERVER='unix/vncserver.in'
 
@@ -78,7 +78,7 @@ echo '********** DETECTING WHITESPACE ERRORS **********'
 
 echo '---------- Stray tab characters ----------'
 echo
-git grep -E $'\t' -- $FILES java/com/jcraft/jsch/ $NFORMATTED $NTIFILES ':!release/rpm.spec.in'
+git grep -E $'\t' -- $FILES $NFORMATTED $NTIFILES ':!release/rpm.spec.in'
 if [ "$TIFILES" != "" ]; then
 	git grep -P '[^^\n\t]\t' -- $TIFILES $EXCLFILES
 fi
@@ -95,12 +95,12 @@ echo
 
 echo '---------- Alt-Space ----------'
 echo
-git grep ' ' -- $FILES java/com/jcraft/jsch/
+git grep ' ' -- $FILES
 echo
 
 echo '---------- Blank line(s) at top of file ----------'
 echo
-git ls-files -- $FILES java/com/jcraft/jsch/ ':!java/com/jcraft/jsch/README' | while read file; do
+git ls-files -- $FILES ':!java/com/jcraft/jsch/README' | while read file; do
 	MATCH=`head -n1 $file | grep -E '^[ '$'\t]*$'`
 	if [ $? = 0 ]; then
 		echo $file:$MATCH
@@ -110,14 +110,14 @@ echo
 
 echo '---------- No blank line at end of file ----------'
 echo
-git ls-files -- $FILES java/com/jcraft/jsch/ | while read file; do
+git ls-files -- $FILES | while read file; do
 	pcregrep -ML '\n\Z$' $file
 done
 echo
 
 echo '---------- General whitespace errors ----------'
 echo
-git diff --check $(git rev-list HEAD | tail -n 1) -- $FILES java/com/jcraft/jsch/ ':!unix/Xvnc/programs/Xserver/hw/vnc/sprite.c'
+git diff --check $(git rev-list HEAD | tail -n 1) -- $FILES ':!unix/Xvnc/programs/Xserver/hw/vnc/sprite.c'
 echo
 
 echo # ************************************************************************
@@ -127,8 +127,8 @@ echo '********** DETECTING INCORRECT COMMENT FORMATTING **********'
 
 echo '---------- Incorrect trailing comment spacing ----------'
 echo
-git grep -P '[^ \t:\/]\/[\/\*]' -- $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!release/' ':!unix/vncserver*.in'
-git grep -E '[^ \\] \/[\/\*]' -- $FILES $NFORMATTED
+git grep -P '[^ \t:\/]\/[\/\*]' -- $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!java/com/jcraft/jsch/' ':!release/' ':!unix/vncserver*.in'
+git grep -E '[^ \\] \/[\/\*]' -- $FILES $NFORMATTED ':!java/com/jcraft/jsch/'
 echo
 
 echo '---------- C++-style comments in C files ----------'
@@ -146,7 +146,7 @@ echo # ************************************************************************
 
 echo '********** DETECTING BAD LINE CONTINUATION SPACING **********'
 echo
-git grep -E '[^ ]+(\\| \\)$' -- $FILES java/com/jcraft/jsch/ $NDOCFILES $NFORMATTED ':!*.in'
+git grep -E '[^ ]+(\\| \\)$' -- $FILES $NDOCFILES $NFORMATTED ':!*.in'
 echo
 
 echo # ************************************************************************
@@ -170,21 +170,21 @@ echo '********** DETECTING INCORRECT BRACKET SPACING **********'
 
 echo '---------- Function-like macro with unattached bracket ----------'
 echo
-git ls-files -- $FILES java/com/jcraft/jsch/ $NFORMATTED | while read file; do
+git ls-files -- $FILES $NFORMATTED | while read file; do
 	pcregrep -H -M '^ *#define[^\n]*\n *\{.*\\$' $file
 done
 echo
 
 echo '---------- class with attached bracket ----------'
 echo
-git grep -E "^ *class .*\{[^}]" -- $FILES java/com/jcraft/jsch/ ':!java/'
+git grep -E "^ *class .*\{[^}]" -- $FILES ':!java/'
 echo
 
 echo '---------- {something ----------'
 echo
 EXPR='{[^ \}]'
 EXCLEXPR='(?<!\$ENV)(?<!\$opt)(?<!\$valFollows)(?<!\$SIG)'
-grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/jcraft/jsch' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
 unset EXPR
 unset EXCLEXPR
@@ -193,14 +193,14 @@ echo
 echo '---------- { something; ... ----------'
 echo
 EXPR='{ [^}]*[;\(][^}\)]*$'
-git grep -P "$EXPR" -- $FILES $NFORMATTED
+git grep -P "$EXPR" -- $FILES $NFORMATTED ':!java/com/jcraft/jsch'
 unset EXPR
 echo
 
 echo '---------- something} ----------'
 echo
 EXPR='[^ \t\{]}'
-grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/jcraft/jsch' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
 EXPR='[^A-Za-z '\'']}'
 if [ "$VNCSERVER" != "" ]; then
@@ -212,7 +212,7 @@ echo
 echo '---------- ... something; } ----------'
 echo
 EXPR='^[^{]*; +}'
-git grep -E "$EXPR" -- $FILES java/com/jcraft/jsch/
+git grep -E "$EXPR" -- $FILES
 unset EXPR
 echo
 
@@ -220,7 +220,7 @@ echo '---------- something{ ----------'
 echo
 EXPR='[^ \t]{'
 EXCLEXPR='(?<!\[\]{)(?<!\"{)'
-grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/jcraft/jsch' ':!release/' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes
 
 EXPR='[^ \$]{'
@@ -235,7 +235,7 @@ echo
 echo '---------- }something ----------'
 echo
 EXPR='}[^ ;,\)\"'\'']'
-git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!.github/workflows' ':!*CMakeLists.txt' ':!cmakescripts/' ':!release/' |
+git grep -E "$EXPR" -- $FILES $NDOCFILES $NFORMATTED ':!.github/workflows' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/jcraft/jsch' ':!release/' |
 	filter_quotes
 unset EXPR
 echo
@@ -257,14 +257,14 @@ done
 
 echo '---------- Semicolon spacing ----------'
 echo
-git grep -E ' ;' -- $FILES $NFORMATTED ':!unix/vncserver.init.in' ':!unix/vncserver.in'
+git grep -P ' ;(?!\-[\(\<]$)(?!\-[\(\<][\. ])' -- $FILES $NFORMATTED ':!unix/vncserver.init.in' ':!unix/vncserver.in'
 echo
 
 echo '---------- Semicolon spacing in one-liners ----------'
 echo
 EXPR='; [^ }]'
 EXCLEXPR='(?! *for \()(?!\t*for\()(?! *channelExec.setCommand\()'
-grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
+grep_without_c_comments '^'"$EXCLEXPR"'.*'"$EXPR" -- $FILES $NFORMATTED ':!*.yml' ':!cmakescripts/' ':!java/com/jcraft/jsch/ChangeLog' ':!java/com/jcraft/jsch/LICENSE*' ':!release/' ':!unix/vncserver.in' ':!unix/vncserver.init.in' ':!unix/vncviewer/vncviewer*.in' |
 	filter_quotes |
 	grep -vE '\) {$'
 unset EXPR
@@ -279,32 +279,32 @@ echo '********** DETECTING INCORRECT FUNCTION/TYPE CAST SPACING **********'
 echo '---------- (type*) ----------'
 echo
 EXCLEXPR='(?<!\\\\)'
-git grep -P "$EXCLEXPR"'[^ \*\.]\*\)' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
+git grep -P "$EXCLEXPR"'[^ \*\.]\*\)' -- $FILES $NFORMATTED
 echo
 
 echo '---------- (type**) ----------'
 echo
 EXPR='[^ ]\*\*\)'
-git grep -E "$EXPR" -- $FILES java/com/jcraft/jsch/ $NFORMATTED
+git grep -E "$EXPR" -- $FILES $NFORMATTED
 unset EXPR
 echo
 
 echo '---------- (type) var ----------'
 echo
 EXPR='(?<!if)(^| |\(|\*)\([^\*][^\)\(\> ]*\) [A-Za-z0-9_\(\"\&][^ \&]'
-grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.in' ':!*.man' |
+grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!java/com/jcraft/jsch/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.in' ':!*.man' |
 	filter_quotes
 unset EXPR
 echo
 
 echo '---------- (type *) var ----------'
 echo
-git grep -E '\*\) [A-Za-z0-9_\(]' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
+git grep -E '\*\) [A-Za-z0-9_\(]' -- $FILES $NFORMATTED
 echo
 
 echo '---------- (*something->method)(args) ----------'
 echo
-git grep -E '\(\*[^\(\)]*\)\(' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
+git grep -E '\(\*[^\(\)]*\)\(' -- $FILES $NFORMATTED
 echo
 
 echo # ************************************************************************
@@ -313,7 +313,7 @@ echo # ************************************************************************
 echo '********** DETECTING INCORRECT MACRO SPACING **********'
 echo
 EXCLEXPR='(?!#define PUT_PIXEL[13][62])(?!#define Swap32)(?!#define ZLIB_MAX_SIZE)'
-git ls-files -- $FILES java/com/jcraft/jsch/ | while read file; do
+git ls-files -- $FILES | while read file; do
 	pcregrep -H -M "$EXCLEXPR"'^#define.*\\\n {5,}[^ \\]+' $file
 done
 # #define  something
@@ -329,7 +329,7 @@ echo '********** DETECTING INCORRECT COMMA SPACING **********'
 echo '---------- [ ], ----------'
 echo
 EXPR=' ,'
-git grep -E "$EXPR" -- $FILES |
+git grep -E "$EXPR" -- $FILES ':!java/com/jcraft/jsch/ChangeLog' ':!java/com/jcraft/jsch/README' |
 	filter_quotes |
 	grep -vE 'zrle\.c:#define EXTRA_ARGS'
 unset EXPR
@@ -358,7 +358,7 @@ echo
 
 echo '---------- Incorrect address operator spacing ----------'
 echo
-git grep -E '[^ \&]\& ' -- $FILES java/com/jcraft/jsch/ $NFORMATTED
+git grep -E '[^ \&]\& ' -- $FILES $NFORMATTED
 echo
 
 # OPERATORS:
@@ -372,7 +372,7 @@ echo
 
 echo '---------- No space before other operators ----------'
 echo
-OP='(?!\-\>)(?!\+\+)(?!\-\-)([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\*(?!\))|\-(?![0-9])|\>+|\<+|&&|(?<!\))&|\|+|\^)'
+OP='(?!\-\>)(?!\+\+)(?!\-\-)(?!\<\>\()([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\*(?!\))|\-(?![0-9])|\>+|\<+|&&|(?<!\))&|\|+|\^)'
 EXPR='[^ ]\b[\)\]]*'"$OP"
 grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt'  ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/MANIFEST.MF' ':!java/com/turbovnc/vncviewer/README.md' ':!*timestamp.in' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/vncviewer/*.in' |
 	filter_quotes |
@@ -408,7 +408,7 @@ echo
 # hope that, if such errors exist, they will be caught by the something{op}
 # check.  We also have to hope that someone will eventually write a decent
 # open source C style checker!
-OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\>+|\<+|&&|\|+|\^)(?<!\-\>)(?<!\+\+)(?<!\-\-)'
+OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+/%]|\>+|\<+|&&|\|+|\^)(?<!\-\>)(?<!\+\+)(?<!\-\-)(?<!\<\>)'
 EXPR="$OP"'[\(]*\b[^ ]'
 grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!*.man' ':!unix/vncserver.init.in' ':!unix/vncserver.in' ':!unix/vncviewer/vncviewer*.in' ':!win/vncviewer/*.in' |
 	filter_quotes |
@@ -430,16 +430,16 @@ echo '---------- Incorrect [!|~] operator spacing ----------'
 echo
 EXPR='[!~] +(\b|\$)'
 EXCLEXPR='(?<!=)(?<!\[ )'
-grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES java/com/jcraft/jsch/ $NDOCFILES |
+grep_without_c_comments "$EXCLEXPR""$EXPR" $FILES $NDOCFILES |
 	filter_quotes
-git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' -- $FILES $NDOCFILES
+git grep -E '[^<]![^A-Za-z0-9_ =()/~"!\&$?|]' -- $FILES $NDOCFILES ':!java/com/jcraft/jsch/jzlib/Deflate.java'
 unset EXPR
 unset EXCLEXPR
 echo
 
 echo '---------- something [::] something ----------'
 echo
-grep_without_c_comments '( ::|:: )' -- $FILES java/com/jcraft/jsch/ $NDOCFILES ':!cmakescripts/'
+grep_without_c_comments '( ::|:: )' -- $FILES $NDOCFILES ':!cmakescripts/'
 echo
 
 echo # ************************************************************************
@@ -449,7 +449,7 @@ echo '********** DETECTING INCORRECT OPERATOR CONTINUANCE **********'
 echo
 OP='([=\+\-\*/%&\|\^\!\<\>]*=|[\+\-\*/%]|\>+|\<+|&+|\|+|\^|\?|\:)'
 EXPR='^ *'"$OP"' +'
-grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!java/com/turbovnc/vncviewer/README.md' |
+grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!java/com/jcraft/jsch/' ':!java/com/turbovnc/vncviewer/README.md' |
 	grep -v '\.m:-'
 unset EXPR
 echo
@@ -460,7 +460,7 @@ echo # ************************************************************************
 echo '********** DETECTING INCORRECT FUNCTION SPACING **********'
 echo
 EXPR='\b \([^\*]'
-EXCLEXPR='(?<!if \(.)(?<!do \(.)(?<!return \(.)(?<!for \(.)(?<!while \(.)(?<!switch \(.)(?<!else \(.)(?<!catch \(.)(?<!assert \(.)(?<!throw \(.)(?<!synchronized \(.)'
+EXCLEXPR='(?<!if \(.)(?<!do \(.)(?<!return \(.)(?<!for \(.)(?<!while \(.)(?<!switch \(.)(?<!else \(.)(?<!catch \(.)(?<!assert \(.)(?<!throw \(.)(?<!synchronized \(.)(?<!try \(.)'
 grep_without_c_comments "$EXPR""$EXCLEXPR" $FILES $NDOCFILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!cmakescripts/' ':!java/com/turbovnc/vncviewer/README.md' ':!release/' ':!unix/vncserver.in' ':!*.man' |
 	filter_quotes |
 	grep -v ':#define' |
