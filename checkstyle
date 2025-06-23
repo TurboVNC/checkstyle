@@ -128,7 +128,7 @@ echo '********** DETECTING INCORRECT COMMENT FORMATTING **********'
 echo '---------- Incorrect trailing comment spacing ----------'
 echo
 git grep -P '[^ \t:\/]\/[\/\*]' -- $FILES $NFORMATTED ':!*.yml' ':!*CMakeLists.txt' ':!java/com/jcraft/jsch/' ':!release/' ':!unix/vncserver*.in'
-git grep -E '[^ \\] \/[\/\*]' -- $FILES $NFORMATTED ':!java/com/jcraft/jsch/'
+git grep -E '[^ \\] \/[\/\*]' -- $FILES $NFORMATTED ':!*.yml' ':!java/com/jcraft/jsch/'
 echo
 
 echo '---------- C++-style comments in C files ----------'
