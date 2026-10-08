@@ -338,7 +338,7 @@ echo
 echo '---------- ,something ----------'
 echo
 EXPR=',[^ \"'\''=\]]'
-grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!CMakeLists.txt' |
+grep_without_c_comments "$EXPR" $FILES $NDOCFILES $NFORMATTED ':!CMakeLists.txt' ':!doc/CMakeLists.txt' |
 	filter_quotes
 unset EXPR
 echo
